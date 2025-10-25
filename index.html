@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM_Music - PWA Híbrida</title>
+<link rel="manifest" href="manifest.json">
+<style>
+/* Mismo estilo que te di antes: modo oscuro, tabla, botones, responsive */
+</style>
+</head>
+<body>
+<header>PM_Music - PWA Híbrida</header>
+<div class="search-filter">
+<input type="text" id="searchInput" placeholder="Buscar canción o intérprete" onkeyup="filterTable()">
+<select id="tonalityFilter" onchange="filterTable()">
+<option value="">Todas las tonalidades</option>
+<option>C</option><option>C#</option><option>D</option><option>Eb</option><option>E</option>
+<option>F</option><option>F#</option><option>G</option><option>G#</option>
+<option>A</option><option>Bb</option><option>B</option>
+</select>
+</div>
+<table id="songsTable">
+<thead>
+<tr><th>🎵 Nombre</th><th>👤 Intérprete</th><th>💿 Álbum</th><th>🎼 Tonalidad</th><th>🥁 Tempo (BPM)</th><th>🎧 Reproducir</th><th>⬇️ Descarga</th></tr>
+</thead>
+<tbody></tbody>
+</table>
+<audio id="audioPlayer" controls style="width:95%; display:block; margin:20px auto;"></audio>
+<script>
+let songs = [];
+fetch('songs.json')
+.then(response => response.json())
+.then(data => {
+  songs = data;
+  const tbody = document.querySelector('#songsTable tbody');
+  songs.forEach(song => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${song.nombre}</td><td>${song.interprete}</td><td>${song.album}</td><td>${song.tonalidad}</td><td>${song.tempo}</td>
+    <td><button class="btn-play" onclick="playAudio('${song.mp3}')">🎧 Reproducir</button></td>
+    <td><button class="btn-download" onclick="downloadAudio('${song.mp3}')">⬇️ Descargar</button></td>`;
+    tbody.appendChild(tr);
+  });
+});
+function filterTable(){ /* igual que antes */ }
+function playAudio(url){ document.getElementById('audioPlayer').src=url; document.getElementById('audioPlayer').play(); }
+function downloadAudio(url){ fetch(url).then(res=>res.blob()).then(blob=>console.log('Archivo cacheado en PWA:', url)); }
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js'); }
+</script>
+</body>
+</html>
