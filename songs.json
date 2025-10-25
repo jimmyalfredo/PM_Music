@@ -5,7 +5,7 @@
     "album": "CANTEMOS CON GOZO HERMANOS",
     "tonalidad": "D",
     "tempo": 112,
-    "mp3": "mp3/CANTEMOS CON GOZO HERMANOS/08 - Tu misericordia.mp3",
+    "mp3": "mp3/CANTEMOS CON GOZO HERMANOS/08-Tu_misericordia.mp3",
     "offline": true
   },
   {
@@ -14,6 +14,7 @@
     "album": "CANTEMOS CON GOZO HERMANOS",
     "tonalidad": "C",
     "tempo": 119,
-    "mp3": "mp3/CANTEMOS CON GOZO HERMANOS/06 - Soberano Señor.mp3",
+    "mp3": "mp3/CANTEMOS CON GOZO HERMANOS/06-Soberano_Señor.mp3",
     "offline": true
+
   }
