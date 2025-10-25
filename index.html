@@ -6,7 +6,65 @@
 <title>PM_Music - PWA Híbrida</title>
 <link rel="manifest" href="manifest.json">
 <style>
-/* Mismo estilo que te di antes: modo oscuro, tabla, botones, responsive */
+/* Modo oscuro y estilo tabla */
+body {
+  background-color: #121212;
+  color: #e0e0e0;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #1f1f1f;
+  padding: 15px;
+  text-align: center;
+  font-size: 1.5em;
+}
+
+.search-filter {
+  display: flex;
+  justify-content: center;
+  margin: 15px;
+  gap: 10px;
+}
+
+input, select {
+  padding: 5px 10px;
+  font-size: 1em;
+  border-radius: 5px;
+  border: none;
+}
+
+table {
+  width: 95%;
+  margin: 0 auto 20px auto;
+  border-collapse: collapse;
+  background-color: #1f1f1f;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #333;
+  text-align: left;
+}
+
+th {
+  background-color: #333;
+}
+
+button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #333;
+  color: #e0e0e0;
+}
+
+button:hover {
+  background-color: #555;
+}
 </style>
 </head>
 <body>
@@ -29,23 +87,62 @@
 <audio id="audioPlayer" controls style="width:95%; display:block; margin:20px auto;"></audio>
 <script>
 let songs = [];
-fetch('songs.json')
-.then(response => response.json())
-.then(data => {
-  songs = data;
+
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('songs.json')
+  .then(response => response.json())
+  .then(data => {
+    songs = data;
+    renderTable(songs);
+  })
+  .catch(err => console.error('Error cargando canciones:', err));
+});
+
+function renderTable(list) {
   const tbody = document.querySelector('#songsTable tbody');
-  songs.forEach(song => {
+  tbody.innerHTML = '';
+  list.forEach(song => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${song.nombre}</td><td>${song.interprete}</td><td>${song.album}</td><td>${song.tonalidad}</td><td>${song.tempo}</td>
-    <td><button class="btn-play" onclick="playAudio('${song.mp3}')">🎧 Reproducir</button></td>
-    <td><button class="btn-download" onclick="downloadAudio('${song.mp3}')">⬇️ Descargar</button></td>`;
+    tr.innerHTML = `<td>${song.nombre}</td>
+                    <td>${song.interprete}</td>
+                    <td>${song.album}</td>
+                    <td>${song.tonalidad}</td>
+                    <td>${song.tempo}</td>
+                    <td><button onclick="playAudio('${song.mp3}')">🎧 Reproducir</button></td>
+                    <td><button onclick="downloadAudio('${song.mp3}')">⬇️ Descargar</button></td>`;
     tbody.appendChild(tr);
   });
-});
-function filterTable(){ /* igual que antes */ }
-function playAudio(url){ document.getElementById('audioPlayer').src=url; document.getElementById('audioPlayer').play(); }
-function downloadAudio(url){ fetch(url).then(res=>res.blob()).then(blob=>console.log('Archivo cacheado en PWA:', url)); }
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js'); }
+}
+
+function filterTable() {
+  const searchInput = document.getElementById('searchInput').value.toLowerCase();
+  const tonalityFilter = document.getElementById('tonalityFilter').value;
+  const filtered = songs.filter(song => {
+    const matchSearch = song.nombre.toLowerCase().includes(searchInput) || song.interprete.toLowerCase().includes(searchInput);
+    const matchTonality = tonalityFilter === '' || song.tonalidad === tonalityFilter;
+    return matchSearch && matchTonality;
+  });
+  renderTable(filtered);
+}
+
+function playAudio(url) {
+  const player = document.getElementById('audioPlayer');
+  player.src = url;
+  player.play();
+}
+
+function downloadAudio(url) {
+  fetch(url)
+    .then(res => res.blob())
+    .then(blob => console.log('Archivo cacheado en PWA:', url));
+}
+
+// Registrar Service Worker para PWA
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+    .then(() => console.log('Service Worker registrado'))
+    .catch(err => console.error('Error registrando Service Worker:', err));
+}
 </script>
 </body>
 </html>
